@@ -1,0 +1,22 @@
+# System Files
+.DS_Store
+Thumbs.db
+
+# Node / JS
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+
+# Rust / Tauri
+src-tauri/target/
+src-tauri/Cargo.lock
+target/
+
+# IDEs
+.vscode/
+.idea/
+
+# Glaze Specific
+config/local.json
