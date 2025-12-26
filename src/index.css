@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  /* Apple-inspired Dark Palette */
+  --bg-color: #0d0d16;
+  --glass-surface: rgba(40, 40, 55, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.05);
+  --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --text-primary: #f0f0f5;
+  --text-secondary: rgba(240, 240, 245, 0.6);
+  --accent-color: #3b82f6; /* Apple Blue */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: rgba(13, 13, 22, 0.65); /* restored liquid glass transparency */
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  /* Mesh Gradient Background */
+  background: 
+    radial-gradient(at 0% 0%, hsla(253,16%,7%,0.4) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(225,39%,30%,0.4) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(339,49%,30%,0.4) 0, transparent 50%);
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Base Glass Container - can be used for the main window */
+.glass-panel {
+  background: var(--glass-surface);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 
+    var(--glass-shadow),
+    inset 0 1px 0 0 var(--glass-highlight);
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Animations - Subtle breathing for background elements if added later */
+@keyframes mesh-drift {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(20px, -20px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
