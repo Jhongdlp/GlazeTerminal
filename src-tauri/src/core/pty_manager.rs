@@ -71,7 +71,6 @@ impl PtyManager {
             loop {
                 match reader.read(&mut buffer) {
                     Ok(n) if n > 0 => {
-                        println!("Rust PTY Read: {} bytes", n);
                         let data = &buffer[..n];
                         
                         // Process Output Middleware
@@ -89,7 +88,6 @@ impl PtyManager {
                         if let Some(processed) = final_data {
                              if !processed.is_empty() {
                                  let data_str = String::from_utf8_lossy(&processed).to_string();
-                                 println!("Emitting {} bytes to ID {}", processed.len(), thread_id);
                                  let _ = app_handle.emit("pty_data", PtyOutputPayload { 
                                      id: thread_id.clone(),
                                      data: data_str 
@@ -113,7 +111,6 @@ impl PtyManager {
 
     pub fn write(&self, data: &str) -> Result<(), anyhow::Error> {
         // Process Input Middleware
-        println!("Rust PTY Write: {} bytes", data.len());
         let chain = self.middleware.lock().unwrap();
         let mut final_data = Some(data.as_bytes().to_vec());
         
