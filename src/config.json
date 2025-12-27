@@ -1,0 +1,16 @@
+{
+  "theme": {
+    "opacity": 0.3,
+    "liquid": {
+      "color1": [0.02, 0.02, 0.05],
+      "color2": [0.05, 0.08, 0.15],
+      "color3": [0.1, 0.1, 0.2],
+      "intenseColor": [0.3, 0.05, 0.05]
+    }
+  },
+  "terminal": {
+    "fontFamily": "\"Fira Code\", \"JetBrains Mono\", monospace",
+    "fontSize": 14,
+    "shell": "/bin/zsh"
+  }
+}
