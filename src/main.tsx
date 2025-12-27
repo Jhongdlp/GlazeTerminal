@@ -1,8 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import Terminal from "./components/Terminal";
+import { LiquidBackground } from "./components/LiquidBackground";
 import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
 import "./index.css";
+import config from "./config.json";
 
 function App() {
   const appWindow = getCurrentWebviewWindow();
@@ -36,79 +38,65 @@ function App() {
   }
 
   return (
-    <div className="glass-panel" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', borderRadius: '12px' }}>
-      {/* Title Bar / Window Controls */}
-      {/* Title Bar / Window Controls */}
-      <div onMouseDown={handleMove} style={{ 
-        height: '38px', 
-        display: 'flex', 
-        alignItems: 'center', 
-        padding: '0 16px', 
-        borderBottom: '1px solid var(--glass-border)',
-        background: 'rgba(255, 255, 255, 0.03)',
-        cursor: 'default',
-        userSelect: 'none'
-      }}>
-        {/* Window Controls */}
+    <div className="w-full h-full relative rounded-2xl overflow-hidden shadow-glass shadow-glass-glow border border-glass-border transition-all duration-300">
+      
+      {/* Layer 0: Liquid Render Engine */}
+      <LiquidBackground />
+
+      {/* Layer 1: Contrast Control (The "Dark Glass" tint) */}
+      <div 
+        className="absolute inset-0 z-5 bg-gray-950 pointer-events-none" 
+        style={{ opacity: config.theme.opacity }}
+      />
+
+      {/* Layer 2: UI Context (Terminal & Controls) */}
+      <div className="relative z-10 w-full h-full flex flex-col bg-transparent">
+        {/* Title Bar / Window Controls */}
         <div 
-          onMouseDown={(e) => e.stopPropagation()}
-          style={{ display: 'flex', gap: '8px', zIndex: 50, cursor: 'auto' }}
+          onMouseDown={handleMove} 
+          className="h-10 flex items-center px-4 border-b border-glass-border/30 bg-white/5 cursor-default select-none"
         >
+          {/* Window Controls */}
           <div 
-            onClick={handleClose} 
-            title="Close"
-            style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f57', boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.1)', cursor: 'pointer' }}
-          ></div>
-          <div 
-            onClick={handleMinimize} 
-            title="Minimize"
-            style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#febc2e', boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.1)', cursor: 'pointer' }}
-          ></div>
-          <div 
-            onClick={handleMaximize} 
-            title="Maximize"
-            style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#28c840', boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.1)', cursor: 'pointer' }}
-          ></div>
+            onMouseDown={preventDrag}
+            className="flex gap-2 z-50 cursor-auto group"
+          >
+            <div 
+              onClick={handleClose} 
+              title="Close"
+              className="w-3 h-3 rounded-full bg-[#ff5f57] hover:bg-[#ff5f57]/80 shadow-inner transition-colors"
+            ></div>
+            <div 
+              onClick={handleMinimize} 
+              title="Minimize"
+              className="w-3 h-3 rounded-full bg-[#febc2e] hover:bg-[#febc2e]/80 shadow-inner transition-colors"
+            ></div>
+            <div 
+              onClick={handleMaximize} 
+              title="Maximize"
+              className="w-3 h-3 rounded-full bg-[#28c840] hover:bg-[#28c840]/80 shadow-inner transition-colors"
+            ></div>
+          </div>
+
+          {/* Title Text */}
+          <div data-tauri-drag-region className="flex-1 text-center text-[13px] text-white/60 font-medium h-full flex items-center justify-center pointer-events-none">
+            Refract — zsh
+          </div>
+
+          {/* Spacer to balance controls */}
+          <div className="w-[52px]"></div> 
         </div>
 
-        {/* Title Text */}
-        <div data-tauri-drag-region style={{ 
-          flex: 1, 
-          textAlign: 'center', 
-          fontSize: '13px', 
-          color: 'var(--text-secondary)', 
-          fontWeight: 500,
-          opacity: 0.8,
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          pointerEvents: 'none' // Let clicks pass through to drag region if needed, though drag region is parent now
-        }}>
-          Glaze Terminal — zsh
+        {/* Main Content Area */}
+        <div className="flex-1 relative overflow-hidden p-2">
+          <Terminal id="1" />
+          
+          {/* Resize Handle */}
+          <div 
+              onMouseDown={handleResize}
+              className="absolute bottom-0 right-0 w-4 h-4 cursor-nwse-resize z-50 hover:bg-white/10 rounded-tl"
+          />
         </div>
-
-        {/* Spacer */}
-        <div style={{ width: '52px', height: '100%' }}></div> 
-      </div>
-
-      {/* Main Content Area */}
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden', padding: '10px' }}>
-        <Terminal id="1" />
-        
-        {/* Resize Handle */}
-        <div 
-            onMouseDown={handleResize}
-            style={{
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-                width: '16px',
-                height: '16px',
-                cursor: 'nwse-resize',
-                zIndex: 50
-            }}
-        />
       </div>
     </div>
   );
