@@ -1,22 +1,36 @@
 # System Files
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
+*~
+*.save
+a.out
 
 # Node / JS
 node_modules/
 dist/
+.vite/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment
 .env
 .env.local
 .env.*.local
 
 # Rust / Tauri
 src-tauri/target/
-src-tauri/Cargo.lock
 target/
+# src-tauri/Cargo.lock  <-- Keep this tracked for applications!
 
 # IDEs
 .vscode/
 .idea/
+*.sublime-workspace
 
 # Glaze Specific
 config/local.json
