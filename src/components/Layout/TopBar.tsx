@@ -15,9 +15,10 @@ interface TopBarProps {
     title?: string;
     showControls?: boolean;
     className?: string; // Allow overrides
+    onOpenSettings?: () => void;
 }
 
-const TopBar: React.FC<TopBarProps> = ({ title = "REFRACT", showControls = true, className }) => {
+const TopBar: React.FC<TopBarProps> = ({ title = "REFRACT", showControls = true, className, onOpenSettings }) => {
   const { minimize, maximize, close, startDrag, toggleFullscreen } = useWindowControls();
 
   const handleMove = () => {
@@ -84,7 +85,7 @@ const TopBar: React.FC<TopBarProps> = ({ title = "REFRACT", showControls = true,
                         <span>Full Screen</span>
                     </DropdownItem>
 
-                     <DropdownItem className="hover:bg-white/10 hover:text-white cursor-pointer gap-2 text-xs">
+                     <DropdownItem onClick={onOpenSettings} className="hover:bg-white/10 hover:text-white cursor-pointer gap-2 text-xs">
                         <Settings size={14} />
                         <span>Settings</span>
                     </DropdownItem>
