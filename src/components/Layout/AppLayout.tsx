@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LiquidBackground } from '../LiquidBackground';
 import TopBar from './TopBar';
 import { useTheme } from '../../context/ThemeContext';
 import { useWindowControls } from '../../hooks/useWindowControls';
+import { ConfigurationWindow } from '../Settings/ConfigurationWindow';
 
 interface AppLayoutProps {
     children: React.ReactNode;
@@ -12,6 +13,7 @@ interface AppLayoutProps {
 const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
     const { theme } = useTheme();
     const { startResize } = useWindowControls();
+    const [showSettings, setShowSettings] = useState(false);
 
     const handleResize = () => {
         startResize('SouthEast');
@@ -30,10 +32,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
                 style={{ opacity: theme.opacity }}
             />
 
+            {/* Settings Window Overlay */}
+            <ConfigurationWindow open={showSettings} onClose={() => setShowSettings(false)} />
+
             {/* Layer 2: UI Context (Terminal & Controls) */}
             <div className="relative z-10 w-full h-full flex flex-col bg-transparent">
                 <div className="relative z-50">
-                    <TopBar title={title} />
+                    <TopBar title={title} onOpenSettings={() => setShowSettings(true)} />
                 </div>
 
                 {/* Main Content Area */}
