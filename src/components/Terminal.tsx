@@ -4,15 +4,19 @@ import { FitAddon } from 'xterm-addon-fit';
 import { WebLinksAddon } from 'xterm-addon-web-links';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
+import { LogicalSize } from '@tauri-apps/api/dpi';
 import 'xterm/css/xterm.css';
 import '../index.css';
 import config from '../config.json';
+import { useTheme } from '../context/ThemeContext';
 
 interface TerminalProps {
   id?: string;
 }
 
 const Terminal: React.FC<TerminalProps> = ({ id: initialId = "1" }) => {
+  const { windowSettings } = useTheme();
   const terminalRef = useRef<HTMLDivElement>(null);
   // Use a unique ID for this instance to prevent collisions in React Strict Mode
   const idRef = useRef(`${initialId}-${Math.floor(Math.random() * 10000)}`);
@@ -49,8 +53,26 @@ const Terminal: React.FC<TerminalProps> = ({ id: initialId = "1" }) => {
     term.open(terminalRef.current);
     try {
         fitAddon.fit();
+        
+        // --- Custom Window Size Logic ---
+        if (windowSettings.useCustomSize) {
+           const core = (term as any)._core;
+           const render = core._renderService;
+           // Fallback if private API changes, though strictly standard in generic xterm usage
+           const cellWidth = render.dimensions?.actualCellWidth || 9; 
+           const cellHeight = render.dimensions?.actualCellHeight || 17;
+           
+           // Calculate Window Size: (Cols * CellW) + HorizontalPadding + (Rows * CellH) + VerticalPadding
+           // Horizontal Padding: ~18px (2px border + 16px padding)
+           // Vertical Padding: ~58px (40px TopBar + 16px padding + 2px border)
+           const width = (windowSettings.columns * cellWidth) + 18;
+           const height = (windowSettings.rows * cellHeight) + 58; // 40 (TopBar) + 16 (Padding) + 2 (Border)
+
+           const appWindow = getCurrentWebviewWindow();
+           appWindow.setSize(new LogicalSize(width, height)).catch(console.error);
+        }
     } catch (e) {
-        console.error("Fit error:", e);
+        console.error("Fit/Resize error:", e);
     }
     
     term.focus(); // Auto-focus
