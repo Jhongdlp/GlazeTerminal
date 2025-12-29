@@ -1,6 +1,6 @@
-
 export interface ThemeDefinition {
     id: string;
+    type: 'liquid' | 'dotted';
     name: string;
     description: string;
     colors: {
@@ -20,6 +20,7 @@ export interface ThemeDefinition {
 export const THEMES: ThemeDefinition[] = [
     {
         id: 'default',
+        type: 'liquid',
         name: 'Pure Night',
         description: 'High contrast, perfect blacks',
         colors: {
@@ -37,6 +38,7 @@ export const THEMES: ThemeDefinition[] = [
     },
     {
         id: 'deep-space',
+        type: 'liquid',
         name: 'Deep Space',
         description: 'Softer dark tones',
         colors: {
@@ -54,6 +56,7 @@ export const THEMES: ThemeDefinition[] = [
     },
     {
         id: 'nebula',
+        type: 'liquid',
         name: 'Nebula',
         description: 'Blueish tint',
         colors: {
@@ -67,6 +70,25 @@ export const THEMES: ThemeDefinition[] = [
             color3: [0.1, 0.2, 0.3],
             intenseColor: [0.1, 0.3, 0.5],
             opacity: 0.4
+        }
+    },
+    {
+        id: 'dotted-matrix',
+        type: 'dotted',
+        name: 'Matrix Dots',
+        description: 'Cyberpunk dotted surface',
+        colors: {
+            background: '#000000',
+            foreground: '#00ff00',
+            accent: '#00ff00'
+        },
+        liquidConfig: {
+             // Values act as fallback or unused for dotted, but kept for type safety or hybrid properties
+            color1: [0, 0, 0],
+            color2: [0, 0, 0],
+            color3: [0, 0, 0],
+            intenseColor: [0, 1, 0],
+            opacity: 0.0
         }
     }
 ];

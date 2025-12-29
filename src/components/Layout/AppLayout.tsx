@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { LiquidBackground } from '../LiquidBackground';
+import { DottedSurface } from '../DottedBackground';
 import TopBar from './TopBar';
 import { useTheme } from '../../context/ThemeContext';
 import { useWindowControls } from '../../hooks/useWindowControls';
@@ -23,8 +24,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
     return (
         <div className="w-full h-full relative rounded-2xl overflow-hidden shadow-glass shadow-glass-glow border border-glass-border transition-all duration-300">
             
-            {/* Layer 0: Liquid Render Engine */}
-            <LiquidBackground />
+            {/* Layer 0: Background Render Engine */}
+            {theme.type === 'dotted' ? (
+                <DottedSurface />
+            ) : (
+                <LiquidBackground />
+            )}
 
             {/* Layer 1: Contrast Control (The "Dark Glass" tint) */}
             <div 

@@ -12,6 +12,7 @@ export interface LiquidTheme {
 
 export interface Theme {
     id: string;
+    type: 'liquid' | 'dotted';
     opacity: number;
     liquid: LiquidTheme;
 }
@@ -44,6 +45,7 @@ interface ThemeContextType {
 
 const defaultTheme: Theme = {
     id: 'default',
+    type: 'liquid',
     opacity: config.theme.opacity,
     liquid: {
         color1: config.theme.liquid.color1,
