@@ -15,6 +15,8 @@
     "@tauri-apps/api": "^2.0.0",
     "@tauri-apps/plugin-shell": "^2.0.0",
     "@types/three": "^0.182.0",
+    "lucide-react": "^0.562.0",
+    "motion": "^12.23.26",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "three": "^0.182.0",
