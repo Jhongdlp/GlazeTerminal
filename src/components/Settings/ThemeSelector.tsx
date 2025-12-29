@@ -22,6 +22,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ open, onClose }) =
         setThemeId(theme.id);
         updateTheme({
             id: theme.id,
+            type: theme.type,
             liquid: theme.liquidConfig,
             opacity: theme.liquidConfig.opacity
         });
