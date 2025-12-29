@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sidebar, SidebarLink, DesktopSidebar } from "../ui/sidebar";
-import { Palette, Keyboard, Info, Terminal, LayoutDashboard, Settings, LogOut } from "lucide-react";
+import { StyledInput, StyledSwitch } from "../ui/StyledInputs";
+import { useTheme } from "../../context/ThemeContext";
+import { Palette, Keyboard, Info, Terminal, LayoutDashboard, Settings, LogOut, MoveHorizontal, MoveVertical, ChevronRight } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { ThemeSelector } from "./ThemeSelector";
+import { THEMES } from "../../constants/ThemeDefinitions";
 
 // Sub-components for pages
 const GeneralSettings = () => (
@@ -35,39 +39,119 @@ const GeneralSettings = () => (
   </div>
 );
 
-const ThemeSettings = () => (
-  <div className="p-4 text-neutral-200">
-     <h3 className="text-xl font-semibold mb-6 text-white border-b border-white/10 pb-4">Appearance</h3>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="group cursor-pointer">
-            <div className="aspect-video rounded-xl bg-[#050505] border-2 border-white ring-2 ring-white/20 flex items-center justify-center mb-3 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="text-sm text-white font-medium z-10">Pure Night</span>
+interface ThemeSettingsProps {
+    onOpenSelector: () => void;
+}
+
+const ThemeSettings: React.FC<ThemeSettingsProps> = ({ onOpenSelector }) => {
+    const { windowSettings, updateWindow, activeThemeId } = useTheme();
+    const { useCustomSize, columns, rows, zoom } = windowSettings;
+
+    const currentThemeDef = THEMES.find(t => t.id === activeThemeId) || THEMES[0];
+
+    return (
+        <div className="p-4 text-neutral-200">
+            <h3 className="text-xl font-semibold mb-6 text-white border-b border-white/10 pb-4">Appearance</h3>
+            
+            <div className="mb-8 space-y-6">
+                <div className="space-y-4">
+                    <h4 className="font-bold text-lg text-white">Window</h4>
+                    
+                    <div className="flex items-center justify-between pb-2">
+                        <span className="text-sm text-neutral-300">Open new windows with custom size</span>
+                        <StyledSwitch 
+                            checked={useCustomSize} 
+                            onChange={(e) => updateWindow({ useCustomSize: e.target.checked })} 
+                        />
+                    </div>
+                    
+                    <div className={cn("grid grid-cols-2 gap-6 transition-all duration-300 ease-in-out", useCustomSize ? "opacity-100 translate-y-0" : "opacity-40 pointer-events-none")}>
+                         <div className="pt-2"> {/* Added padding for label space */}
+                            <StyledInput 
+                                label="Columns" 
+                                type="number" 
+                                value={columns}
+                                onChange={(e) => updateWindow({ columns: parseInt(e.target.value) || 0 })}
+                                required
+                                disabled={!useCustomSize}
+                                icon={<MoveHorizontal className="w-5 h-5" />}
+                            />
+                         </div>
+                         <div className="pt-2">
+                            <StyledInput 
+                                label="Rows" 
+                                type="number" 
+                                value={rows}
+                                onChange={(e) => updateWindow({ rows: parseInt(e.target.value) || 0 })}
+                                required
+                                disabled={!useCustomSize}
+                                icon={<MoveVertical className="w-5 h-5" />}
+                            />
+                         </div>
+                    </div>
+
+                    
+                    <div className="relative pt-2">
+                        <h4 className="font-medium text-neutral-100 mb-2">Zoom</h4>
+                         <div className="relative">
+                             <select 
+                                className="appearance-none bg-black border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white w-full focus:ring-1 focus:ring-white/20 focus:border-white/20 outline-none transition-all"
+                                value={`${zoom}%`}
+                                onChange={(e) => updateWindow({ zoom: parseInt(e.target.value) })}
+                             >
+                                 <option>100%</option>
+                                 <option>110%</option>
+                                 <option>125%</option>
+                                 <option>150%</option>
+                             </select>
+                             <div className="absolute right-0 top-0 bottom-0 flex items-center pr-3 pointer-events-none">
+                                <Settings className="w-4 h-4 text-neutral-500" /> 
+                             </div>
+                         </div>
+                         <p className="text-xs text-neutral-500 mt-2">Adjusts the default zoom level across all windows.</p>
+                    </div>
+                </div>
             </div>
-            <p className="text-sm text-neutral-400 text-center">High contrast, perfect blacks</p>
-        </div>
-        <div className="group cursor-pointer">
-            <div className="aspect-video rounded-xl bg-neutral-900 border border-white/10 group-hover:border-white/30 transition-colors flex items-center justify-center mb-3">
-                 <span className="text-sm text-neutral-400 group-hover:text-white transition-colors">Deep Space</span>
+
+            <h4 className="font-bold text-lg text-white mb-4 mt-8">Theme</h4>
+            
+            <div 
+                onClick={onOpenSelector}
+                className="group cursor-pointer rounded-xl bg-[#09090b] border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all p-4 flex items-center gap-4 max-w-xl"
+            >
+                {/* Preview Mini */}
+                <div 
+                    className="w-24 h-16 rounded-lg shadow-inner relative overflow-hidden flex-shrink-0"
+                    style={{ backgroundColor: currentThemeDef.colors.background }}
+                >
+                     <div className="absolute top-2 left-2 flex gap-1">
+                        <div className="w-1.5 h-1.5 rounded-full bg-red-500/20" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-yellow-500/20" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500/20" />
+                    </div>
+                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[8px] font-mono opacity-80" style={{ color: currentThemeDef.colors.foreground }}>
+                        <span>&gt;_</span>
+                    </div>
+                </div>
+
+                <div className="flex-1">
+                    <h5 className="text-white font-medium mb-1">Current Theme</h5>
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm text-neutral-400">{currentThemeDef.name}</span>
+                        <span className="text-xs text-neutral-600">•</span>
+                        <span className="text-xs text-neutral-500">{currentThemeDef.description}</span>
+                    </div>
+                </div>
+
+                <ChevronRight className="w-5 h-5 text-neutral-500 group-hover:text-white transition-colors" />
             </div>
-            <p className="text-sm text-neutral-500 text-center">Softer dark tones</p>
+            
+            <p className="text-xs text-neutral-500 mt-4 ml-1">
+                Click to browse all available themes.
+            </p>
         </div>
-        <div className="group cursor-pointer">
-            <div className="aspect-video rounded-xl bg-slate-900 border border-white/10 group-hover:border-white/30 transition-colors flex items-center justify-center mb-3">
-                 <span className="text-sm text-neutral-400 group-hover:text-white transition-colors">Nebula</span>
-            </div>
-            <p className="text-sm text-neutral-500 text-center">Blueish tint</p>
-        </div>
-    </div>
-    <div className="mt-10 p-6 rounded-xl bg-neutral-900/50 border border-white/5">
-        <div className="flex justify-between mb-4">
-             <h4 className="font-medium text-neutral-100">Window Transparency</h4>
-             <span className="text-sm text-neutral-500">80%</span>
-        </div>
-        <input type="range" className="w-full h-1 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-white" />
-    </div>
-  </div>
-);
+    );
+};
 
 const ShortcutSettings = () => (
   <div className="p-4 text-neutral-200">
@@ -114,6 +198,7 @@ const AboutSettings = () => (
 export const ConfigurationWindow = ({ open, onClose }: { open: boolean, onClose: () => void }) => {
     const [activeTab, setActiveTab] = useState("general");
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [themeSelectorOpen, setThemeSelectorOpen] = useState(false);
 
     const links = [
         {
@@ -145,7 +230,7 @@ export const ConfigurationWindow = ({ open, onClose }: { open: boolean, onClose:
     const renderContent = () => {
         switch(activeTab) {
             case "general": return <GeneralSettings />;
-            case "appearance": return <ThemeSettings />;
+            case "appearance": return <ThemeSettings onOpenSelector={() => setThemeSelectorOpen(true)} />;
             case "shortcuts": return <ShortcutSettings />;
             case "about": return <AboutSettings />;
             default: return <GeneralSettings />;
@@ -217,6 +302,10 @@ export const ConfigurationWindow = ({ open, onClose }: { open: boolean, onClose:
 
                      {/* Content Area */}
                     <div className="flex-1 flex flex-col h-full relative bg-[#09090b] overflow-hidden">
+                        
+                         {/* Theme Selector Sidebar Overlay */}
+                         <ThemeSelector open={themeSelectorOpen} onClose={() => setThemeSelectorOpen(false)} />
+
                          <div className="flex-1 overflow-auto custom-scrollbar p-6 md:p-12 pb-12">
                             <motion.div
                                 key={activeTab}
